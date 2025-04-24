@@ -1,0 +1,22 @@
+name: Validate XML Files
+
+on:
+  pull_request:
+    paths:
+      - '**/*.xml' # Only trigger when .xml files are modified
+
+jobs:
+  validate-xml:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Validate XML files
+        run: |
+          # Find all .xml files and validate them
+          for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.xml$'); do
+            echo "Validating $file..."
+            xmllint --noout "$file" || exit 1
+          done
