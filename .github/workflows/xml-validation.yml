@@ -2,9 +2,8 @@ name: Validate XML Files
 
 on:
   pull_request:
-    # Remove the paths filter temporarily for debugging
-    # paths:
-    #   - '**/*.xml' 
+    paths:
+      - '**/*.xml' 
 
 jobs:
   validate-xml:
