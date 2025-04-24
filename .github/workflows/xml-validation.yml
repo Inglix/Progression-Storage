@@ -3,7 +3,7 @@ name: Validate XML Files
 on:
   pull_request:
     paths:
-      - '**/*.xml' # Only trigger when .xml files are modified
+      - '**/*.xml' # Trigger only on .xml files
 
 jobs:
   validate-xml:
@@ -13,9 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Debug: List changed files
+        run: |
+          echo "Changed files in this pull request:"
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
+
       - name: Validate XML files
         run: |
-          # Find all .xml files and validate them
+          # Find and validate all .xml files in the pull request
           for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.xml$'); do
             echo "Validating $file..."
             xmllint --noout "$file" || exit 1
