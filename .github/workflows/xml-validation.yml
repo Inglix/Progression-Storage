@@ -3,7 +3,7 @@ name: Validate XML Files
 on:
   pull_request:
     paths:
-      - '**/*.xml' 
+      - '**/*.xml' # Trigger only on .xml files
 
 jobs:
   validate-xml:
@@ -15,22 +15,16 @@ jobs:
         with:
           fetch-depth: 0 # Fetch full history to ensure all commits are available
 
-      - name: Debug - List all files in the repo
-        run: |
-          echo "Listing all files in the repository:"
-          find . -type f
+      - name: Install xmllint
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
 
-      - name: Debug - List changed files in the pull request
+      - name: Debug - List changed files
         run: |
           echo "Changed files in this pull request:"
           git fetch origin ${{ github.event.pull_request.base.ref }} # Ensure the base branch is fetched
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
 
-      - name: Install xmllint
-        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
-
       - name: Validate XML files
-        if: always() # Run this step even if the previous ones fail for debugging
         run: |
           # Find and validate all .xml files in the pull request
           for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.xml$'); do
