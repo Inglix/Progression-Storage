@@ -12,10 +12,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch the full history to ensure all commits are available
 
-      - name: Debug List changed files
+      - name: Debug - List changed files
         run: |
           echo "Changed files in this pull request:"
+          git fetch origin ${{ github.event.pull_request.base.ref }} # Ensure the base branch is fetched
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
 
       - name: Validate XML files
