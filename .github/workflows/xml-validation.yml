@@ -18,11 +18,9 @@ jobs:
       - name: Install xmllint
         run: sudo apt-get update && sudo apt-get install -y libxml2-utils
 
-      - name: Debug - List changed files
+      - name: Fetch the base branch
         run: |
-          echo "Changed files in this pull request:"
           git fetch origin ${{ github.event.pull_request.base.ref }} # Ensure the base branch is fetched
-          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
 
       - name: Validate XML files
         run: |
